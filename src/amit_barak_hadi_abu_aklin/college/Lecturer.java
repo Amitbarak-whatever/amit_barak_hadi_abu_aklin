@@ -1,32 +1,27 @@
 package amit_barak_hadi_abu_aklin.college;
 
 class Lecturer {
+
     public enum Degree{FIRST,SECOND,DOC,PROF}
     private double salary;
     private String name;
     private String id;
     private Degree degree;
     private Department department;
-    private Committees[] committees;
+    private Committee[] committees;
+
 
     public Lecturer(double salary, Department department, String degree, String id, String name) {
         this.department = department;
         this.id = id;
         this.name = name;
-        setSalary(salary);
+        this.salary = salary;
         setDegree(degree);
+        this.committees = new Committee[0];
     }
 
     public double getSalary() {
         return salary;
-    }
-
-    public boolean setSalary(double salary) {
-        if (0<salary){
-            this.salary = salary;
-            return true;
-        }
-        return false;
     }
 
     public String getName() {
@@ -49,15 +44,24 @@ class Lecturer {
         return degree;
     }
 
-    public boolean setDegree(String degreeFromUser) {
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+
+
+    public void setDegree(String degreeFromUser) {
         Degree[] degrees = Degree.values();
         for (Degree deg : degrees ){
             if (deg.name().equals(degreeFromUser)){
                 this.degree = deg;
-                return true;
             }
         }
-        return false;
+
     }
 
 
