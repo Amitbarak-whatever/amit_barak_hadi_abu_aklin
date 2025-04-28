@@ -29,10 +29,13 @@ class Department {
             lecturers = Arrays.copyOf(lecturers, lecturers.length == 0 ? 2 : lecturers.length * 2);
         }
         lecturers[numOfLecturers++] = lecturer;
-        lecturer.setDepartment(this.department);
+        lecturer.setDepartment(this);
         return true;
     }
-    // TODO ask pini how to send the the department to lecturer
+
+    public String getName() {
+        return name;
+    }
 
 //    public boolean removeFromDepartment(Lecturer lecturer){
 //        for (Lecturer name : lecturers ){
@@ -41,6 +44,7 @@ class Department {
 //            }
 //        }
 //    }
+//
 //    @Override
 //    public String toString() {
 //        StringBuilder sb = new StringBuilder();

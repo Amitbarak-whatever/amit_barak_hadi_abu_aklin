@@ -1,43 +1,27 @@
 package amit_barak_hadi_abu_aklin.college;
 
-class Lecturer {
+import amit_barak_hadi_abu_aklin.Utils;
 
-    public enum Degree{FIRST,SECOND,DOC,PROF}
+class Lecturer {
     private double salary;
     private String name;
     private String id;
     private Degree degree;
+    private String degreeName;
     private Department department;
     private Committee[] committees;
-
-
-    public Lecturer(double salary, Department department, String degree, String id, String name) {
-        this.department = department;
+    private int numOfCommittees;
+    public Lecturer(double salary,String degree,String degreeName, String id, String name) {
         this.id = id;
         this.name = name;
         this.salary = salary;
-        setDegree(degree);
+        this.degreeName = degreeName;
         this.committees = new Committee[0];
-    }
-
-    public double getSalary() {
-        return salary;
+        setDegree(degree);
     }
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public Degree getDegree() {
@@ -52,7 +36,13 @@ class Lecturer {
         this.department = department;
     }
 
+    public int getNumOfCommittees() {
+        return numOfCommittees;
+    }
 
+    public Committee[] getCommittees() {
+        return committees;
+    }
 
     public void setDegree(String degreeFromUser) {
         Degree[] degrees = Degree.values();
@@ -61,7 +51,13 @@ class Lecturer {
                 this.degree = deg;
             }
         }
+    }
 
+    public void addCommitteeToLecturer(Committee committee) {
+        if (numOfCommittees == committees.length){
+            committees = (Committee[]) Utils.resizeArr(committees);
+        }
+        committees[numOfCommittees++] = committee;
     }
 
 

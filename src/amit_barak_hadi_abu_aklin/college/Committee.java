@@ -1,49 +1,57 @@
 package amit_barak_hadi_abu_aklin.college;
 
-import java.util.Arrays;
+import amit_barak_hadi_abu_aklin.ActionStatus;
+import amit_barak_hadi_abu_aklin.Utils;
 
 class Committee {
     private String name;
-    private Lecturer headOf;
+    private Lecturer head;
     private Lecturer[] lecturers;
     private int numOfLecturers;
 
-    public Committee(String name, Lecturer headOf) {
+    public Committee(String name, Lecturer head) {
         this.name = name;
         this.lecturers = new Lecturer[0];
-        setHeadOf(headOf);
+        this.head = head;
     }
 
-    public boolean setHeadOf(Lecturer headOf) {
-        if (headOf.getDegree() == Lecturer.Degree.PROF || headOf.getDegree() == Lecturer.Degree.DOC) {
-            this.headOf = headOf;
-            return true;
+    public ActionStatus setHeadOf(Lecturer newHead) {
+        if (newHead.getDegree() == Degree.PROF || newHead.getDegree() == Degree.DOC) {
+            this.head = newHead;
+            return ActionStatus.LECTURER_NOT_QUALIFIED;
         }
-        return false;
+        return ActionStatus.SUCCESS;
     }
 
-    public void addLecturerToCommittee(Lecturer lecturer){
+
+    public void removeFromCommittee(Lecturer lecturer){
+        Utils.removeFromArray(this.lecturers, lecturer , this.numOfLecturers);
+        Utils.removeFromArray(lecturer.getCommittees(), this ,lecturer.getNumOfCommittees());
+        //TODO add a use from actionstatus and do a change to numOf to both lecturer and committee
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void addLecturerToCommitteeCollege(Lecturer lecturer){
         if (numOfLecturers == lecturers.length){
-            lecturers = Arrays.copyOf(lecturers,lecturers.length == 0 ? 2 : lecturers.length * 2);
+            lecturers = (Lecturer[]) Utils.resizeArr(lecturers);
         }
         lecturers[numOfLecturers++] = lecturer;
+        lecturer.addCommitteeToLecturer(this);
     }
-    public void removeFromCommittee(Lecturer lecturer){
-        for (Lecturer name : lecturers ){
-            if (lecturer == name){
-                name = null;
-            }
-        }
+    public Lecturer getHead() {
+        return head;
     }
-    //TODO Remove the committee form the lecturer also
-    //TODO ask pini if it is ok
+
 
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Committee Name: ").append(name).append("\n");
-        sb.append("Head of Committee: ").append(headOf.getName()).append("\n");
+        sb.append("Head of Committee: ").append(head.getName()).append("\n");
         sb.append("Lecturers in Committee: ").append("\n");
         if (numOfLecturers == 0) {
             sb.append(" No lecturers assigned yet.");

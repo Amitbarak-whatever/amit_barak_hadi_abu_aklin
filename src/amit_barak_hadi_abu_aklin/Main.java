@@ -31,56 +31,88 @@ public class Main {
             userChosen = showMenu(s);
             switch (userChosen) {
                 case 0 -> System.out.println("goodbye");
-                case 1 -> addLecturerMain();
-                case 2 -> addCommitteeMain();
-                case 3 -> lecturerToCommittee();
-                case 4 -> newCommitteeHead();
-                case 5 -> removeFromCommittee();
-                case 6 -> addDepartmentMain();
-                case 7 -> showAvgPayAll();
-                case 8 -> showAvgPayDepartment();
-                case 9 -> lecturersAllStats();
-                case 10 -> committeesAllStats();
-                case 11 -> lecturerToDepartment();
+                case 1 -> addLecturerMain(c1);
+                case 2 -> addCommitteeMain(c1);
+                case 3 -> lecturerToCommittee(c1);
+                case 4 -> newCommitteeHeadMain(c1);
+                case 5 -> removeFromCommitteeMain(c1);
+                case 6 -> addDepartmentMain(c1);
+                case 7 -> showAvgPayAll(c1);
+                case 8 -> showAvgPayDepartment(c1);
+                case 9 -> lecturersAllStats(c1);
+                case 10 -> committeesAllStats(c1);
+                case 11 -> lecturerToDepartment(c1);
                 default -> System.out.println("Unexpected value");
             }
         } while (userChosen != 0);
     }
 
-    private static void addLecturerMain() {
+    private static void addLecturerMain(College c1) {
         s.nextLine();
         System.out.println("Enter lecturer's name: ");
         String name = s.nextLine();
         System.out.println("Enter lecturer's ID: ");
         String id = s.nextLine();
-        System.out.println("Enter lecturer's degree: (FIRST,SECOND,DOC,PROF)");
+        System.out.println("Enter lecturer's degree: (FIRST,SECOND,DOCTOR,PROF)");
+        //TODO check if in correct values
         String degree = s.nextLine();
-        System.out.println("Enter lecturer's name of degree:");
+        System.out.println("Enter lecturer's degree name:");
         String degreeName = s.nextLine();
         System.out.println("Enter lecturer's salary:");
         double salary = s.nextDouble();
         s.nextLine();
-        College.addLecturer(name, id, degree, degreeName, salary);
+        ActionStatus res = College.addLecturerUser(c1 ,name, id, degree, degreeName, salary);
+        System.out.println(res);
+        if (res != ActionStatus.SUCCESS) {
+            System.out.println("would you like to retry? yes/no");
+            String redo = s.nextLine();
+            switch (redo) {
+                case "yes" -> {addCommitteeMain(c1);return;}
+                case "no" -> {return;}
+                default -> System.out.println("invalid answer, returning to main menu");
+            }
+        }
     }
-    private static void addCommitteeMain() {
+    private static void addCommitteeMain(College c1) {
         s.nextLine();
-        System.out.println("Enter committee's name:  " );
+        System.out.println("Enter committee's name:" );
         String name = s.nextLine();
-        System.out.println("Enter committee's head:  " );
+        System.out.println("Enter committee's head:" );
         String head = s.nextLine();
-        College.addCommittee(name,head);
+        ActionStatus res = College.addCommitteeUser(c1 ,name, head);
+        System.out.println(res);
+        if (res != ActionStatus.SUCCESS) {
+            System.out.println("would you like to retry? yes/no");
+            String redo = s.nextLine();
+            switch (redo) {
+                case "yes" -> {addCommitteeMain(c1);return;}
+                case "no" -> {return;}
+                default -> System.out.println("invalid answer, returning to main menu");
+            }
+        }
     }
 
-    private static void addDepartmentMain() {
+    private static void addDepartmentMain(College c1) {
         s.nextLine();
         System.out.println("Enter department's name: ");
         String name = s.nextLine();
         System.out.println("Enter number of students: ");
         int num = s.nextInt();
         s.nextLine();
-        College.addDepartment(name,num);}
+        ActionStatus res = College.addDepartmentUser(c1,name,num);
+        System.out.println(res);
+        if (res != ActionStatus.SUCCESS){
+            System.out.println("would you like to retry? yes/no");
+            String redo = s.nextLine();
+            switch (redo){
+                case "yes" ->{addDepartmentMain(c1);return;}
+                case "no"-> {return;}
+                default -> System.out.println("invalid answer, returning to main menu");
+            }
+        }
+    }
 
-    private static void lecturerToCommittee() {
+    private static void lecturerToCommittee(College c1) {
         s.nextLine();
         System.out.println("Enter lecturer's name: " );
         String nameL = s.nextLine();
@@ -88,7 +120,7 @@ public class Main {
         String nameC = s.nextLine();
     }
 
-    private static void showAvgPayDepartment() {
+    private static void showAvgPayDepartment(College c1) {
         System.out.println("which department do you want to check?");
         String name = s.nextLine();
         College.checkDepartment(name);
@@ -100,7 +132,7 @@ public class Main {
         }
     }
 
-    private static void showAvgPayAll() {
+    private static void showAvgPayAll(College c1) {
         System.out.println("average salary: " + College.avgPayAll());
     }
 
