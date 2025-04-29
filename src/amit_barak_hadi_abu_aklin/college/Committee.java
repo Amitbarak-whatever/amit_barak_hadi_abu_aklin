@@ -18,16 +18,21 @@ class Committee {
     public ActionStatus setHeadOf(Lecturer newHead) {
         if (newHead.getDegree() == Degree.PROF || newHead.getDegree() == Degree.DOC) {
             this.head = newHead;
-            return ActionStatus.LECTURER_NOT_QUALIFIED;
+            return ActionStatus.SUCCESS;
         }
-        return ActionStatus.SUCCESS;
+        return ActionStatus.LECTURER_NOT_QUALIFIED;
     }
 
 
-    public void removeFromCommittee(Lecturer lecturer){
-        Utils.removeFromArray(this.lecturers, lecturer , this.numOfLecturers);
-        Utils.removeFromArray(lecturer.getCommittees(), this ,lecturer.getNumOfCommittees());
-        //TODO add a use from actionstatus and do a change to numOf to both lecturer and committee
+    public ActionStatus removeFromCommittee(Lecturer lecturer){
+        int oldNum = numOfLecturers;
+        numOfLecturers = Utils.removeFromArray(lecturers, lecturer, numOfLecturers);
+
+        if (oldNum == numOfLecturers) {
+            return ActionStatus.LECTURER_NOT_EXIST_IN_COMM;
+        }
+        lecturer.setNumOfCommittees(Utils.removeFromArray(lecturer.getCommittees(), this, lecturer.getNumOfCommittees()));
+        return ActionStatus.SUCCESS;
     }
 
     public String getName() {
@@ -41,6 +46,7 @@ class Committee {
         lecturers[numOfLecturers++] = lecturer;
         lecturer.addCommitteeToLecturer(this);
     }
+
     public Lecturer getHead() {
         return head;
     }

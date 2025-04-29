@@ -44,6 +44,14 @@ class Lecturer {
         return committees;
     }
 
+    public void setNumOfCommittees(int numOfCommittees) {
+        this.numOfCommittees = numOfCommittees;
+    }
+
+    public double getSalary() {
+        return salary;
+    }
+
     public void setDegree(String degreeFromUser) {
         Degree[] degrees = Degree.values();
         for (Degree deg : degrees ){

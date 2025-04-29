@@ -37,6 +37,14 @@ class Department {
         return name;
     }
 
+    public int getNumOfLecturers() {
+        return numOfLecturers;
+    }
+
+    public Lecturer[] getLecturers() {
+        return lecturers;
+    }
+
 //    public boolean removeFromDepartment(Lecturer lecturer){
 //        for (Lecturer name : lecturers ){
 //            if (lecturer == name){
@@ -63,5 +71,6 @@ class Department {
 //        }
 //        return sb.toString();
 //    }
+
 
 }
