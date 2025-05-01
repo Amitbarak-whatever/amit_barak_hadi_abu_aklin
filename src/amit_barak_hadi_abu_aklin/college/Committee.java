@@ -1,7 +1,6 @@
 package amit_barak_hadi_abu_aklin.college;
 
 import amit_barak_hadi_abu_aklin.ActionStatus;
-import amit_barak_hadi_abu_aklin.Utils;
 
 class Committee {
     private String name;
@@ -20,6 +19,7 @@ class Committee {
             this.head = newHead;
             return ActionStatus.SUCCESS;
         }
+        if (if newhead)
         return ActionStatus.LECTURER_NOT_QUALIFIED;
     }
 

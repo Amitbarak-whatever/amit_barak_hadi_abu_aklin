@@ -1,4 +1,4 @@
-package amit_barak_hadi_abu_aklin;
+package amit_barak_hadi_abu_aklin.college;
 
 import java.util.Arrays;
 
@@ -8,13 +8,34 @@ public class Utils {
     }
 
     public static boolean isExist(Object[] arr, int numOfItems, Object item) {
-        for (int i = 0; i < numOfItems; i++) {
-            if (arr[i].equals(item)) {
-                return true;
+        if (arr instanceof Lecturer[] lecturers){
+            for (int i = 0; i < numOfItems; i++) {
+                if (lecturers[i].getName().equals(((Lecturer) item).getName())) {
+                    return true;
+                }
             }
+            return false;
+        }
+        if (arr instanceof Committee[] committee){
+            for (int i = 0; i < numOfItems; i++) {
+                if (committee[i].getName().equals(((Committee) item).getName())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        if (arr instanceof Department[] departments){
+            for (int i = 0; i < numOfItems; i++) {
+                if (departments[i].getName().equals(((Department) item).getName())) {
+                    return true;
+                }
+            }
+            return false;
         }
         return false;
-    }
+        }
+
+
 
     public static int removeFromArray(Object[] removeFrom, Object toRemove, int numOf) {
         for (int i = 0; i < numOf; i++) {

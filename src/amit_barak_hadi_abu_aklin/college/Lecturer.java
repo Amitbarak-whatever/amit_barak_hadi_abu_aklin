@@ -1,7 +1,5 @@
 package amit_barak_hadi_abu_aklin.college;
 
-import amit_barak_hadi_abu_aklin.Utils;
-
 class Lecturer {
     private double salary;
     private String name;
@@ -11,6 +9,7 @@ class Lecturer {
     private Department department;
     private Committee[] committees;
     private int numOfCommittees;
+
     public Lecturer(double salary,String degree,String degreeName, String id, String name) {
         this.id = id;
         this.name = name;

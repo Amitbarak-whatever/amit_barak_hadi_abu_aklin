@@ -1,7 +1,6 @@
 package amit_barak_hadi_abu_aklin.college;
 
 import amit_barak_hadi_abu_aklin.ActionStatus;
-import amit_barak_hadi_abu_aklin.Utils;
 
 public class College {
     private String name;

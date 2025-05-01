@@ -23,7 +23,7 @@ public class Main {
             "Exit Program",                                      // 0
             "Add Lecturer",                                      // 1
             "Add Committee",                                     // 2
-            "Assign lecturer to committee",                         // 3
+            "Assign lecturer to committee",                      // 3
             "Appoint new head of a committee",                   // 4
             "Remove lecturer from committee",                    // 5
             "Add Department",                                    // 6
@@ -49,21 +49,20 @@ public class Main {
                 case 1 -> {s.nextLine();addLecturerMain(c1);}
                 case 2 -> {s.nextLine();addCommitteeMain(c1);}
                 case 3 -> {s.nextLine();lecturerToCommitteeMain(c1);}
-                case 4 -> newCommitteeHeadMain(c1);
-                case 5 -> removeFromCommitteeMain(c1);
-                case 6 -> addDepartmentMain(c1);
+                case 4 -> {s.nextLine();newCommitteeHeadMain(c1);}
+                case 5 -> {s.nextLine();removeFromCommitteeMain(c1);}
+                case 6 -> {s.nextLine();addDepartmentMain(c1);}
                 case 7 -> showAvgPayAllMain(c1);
-                case 8 -> showAvgPayDepartmentMain(c1);
+                case 8 -> {s.nextLine();showAvgPayDepartmentMain(c1);}
                 case 9 -> lecturersAllStatsMain(c1);
                 case 10 -> committeesAllStatsMain(c1);
-                case 11 -> lecturerToDepartmentMain(c1);
+                case 11 -> {s.nextLine();lecturerToDepartmentMain(c1);}
                 default -> System.out.println("Unexpected value");
             }
         } while (userChosen != 0);
     }
 
     private static void removeFromCommitteeMain(College c1) {
-        s.nextLine();
         System.out.println("Enter committee's name:" );
         String committee = s.nextLine();
         System.out.println("Enter committee's head:" );
@@ -174,7 +173,6 @@ public class Main {
     }
 
     private static void lecturerToDepartmentMain(College c1) {
-        s.nextLine();
         System.out.println("Enter Lecturer's name: ");
         String lecturerName = s.nextLine();
         System.out.println("Enter Department's name: ");
@@ -188,14 +186,13 @@ public class Main {
             String redo = s.nextLine();
             switch (redo.toLowerCase()) {
                 case "yes" -> lecturerToDepartmentMain(c1);
-                case "no" -> { return; }
+                case "no" -> { return;}
                 default -> System.out.println("Invalid answer, returning to main menu.");
             }
         }
     }
 
     private static void newCommitteeHeadMain(College c1) {
-        s.nextLine();
         System.out.println("Enter committee's name:");
         String committeeName = s.nextLine();
         System.out.println("Enter new head lecturer's name:");
