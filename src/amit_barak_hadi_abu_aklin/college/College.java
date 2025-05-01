@@ -76,6 +76,9 @@ public class College {
         if (c1 == null) {
             return ActionStatus.COMMITTEE_NOT_EXIST;
         }
+        if (l1.equals(c1.getHead())){
+            return ActionStatus.L_IS_HEAD;
+        }
         c1.addLecturerToCommitteeCollege(l1);
         return ActionStatus.SUCCESS;
     }
@@ -150,7 +153,7 @@ public class College {
     }
 
     public static ActionStatus removeLecturerFromCommitteeUser(College college, String lecturer, String committee) {
-        return college.removeLecturerFromCommitteeCollege(lecturer , committee);
+        return college.removeLecturerFromCommitteeCollege(committee , lecturer);
     }
 
     public ActionStatus removeLecturerFromCommitteeCollege( String committeeName, String lecturerName) {

@@ -65,7 +65,7 @@ public class Main {
     private static void removeFromCommitteeMain(College c1) {
         System.out.println("Enter committee's name:" );
         String committee = s.nextLine();
-        System.out.println("Enter committee's head:" );
+        System.out.println("Enter committee's lecturer:" );
         String lecturer = s.nextLine();
         ActionStatus res = College.removeLecturerFromCommitteeUser(c1 , lecturer, committee);
         System.out.println(res);
@@ -245,7 +245,7 @@ public class Main {
     private static void showAvgPayAllMain(College c1) {
         double res = College.avgPayAllUser(c1);
         if (res == -1){
-            System.out.println("College" + c1.getName() + " doesn't have any lecturers");
+            System.out.println("College " + c1.getName() + " doesn't have any lecturers");
             return;
         }
         System.out.println("average salary: " + res);

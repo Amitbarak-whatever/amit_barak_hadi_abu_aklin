@@ -11,7 +11,9 @@ public enum ActionStatus {
     COMMITTEE_EXIST("committee already exists."),
     DEPARTMENT_EXIST("department already exists."),
     LECTURER_NOT_QUALIFIED("lecturer isn't qualified to be committee's head"),
-    L_C_NOT_EXIST("lecturer and committee doesn't exist");
+    L_C_NOT_EXIST("lecturer and committee doesn't exist"),
+    L_IS_HEAD("lecturer is the head of the committee.")
+    ;
 
     private final String message;
 

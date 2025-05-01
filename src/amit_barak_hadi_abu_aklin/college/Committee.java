@@ -16,10 +16,12 @@ class Committee {
 
     public ActionStatus setHeadOf(Lecturer newHead) {
         if (newHead.getDegree() == Degree.PROF || newHead.getDegree() == Degree.DOC) {
+            if (Utils.isExist(lecturers , numOfLecturers, newHead)){
+                this.removeFromCommittee(newHead);
+            }
             this.head = newHead;
             return ActionStatus.SUCCESS;
         }
-        if (if newhead)
         return ActionStatus.LECTURER_NOT_QUALIFIED;
     }
 
@@ -27,7 +29,6 @@ class Committee {
     public ActionStatus removeFromCommittee(Lecturer lecturer){
         int oldNum = numOfLecturers;
         numOfLecturers = Utils.removeFromArray(lecturers, lecturer, numOfLecturers);
-
         if (oldNum == numOfLecturers) {
             return ActionStatus.LECTURER_NOT_EXIST_IN_COMM;
         }
