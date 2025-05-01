@@ -61,12 +61,34 @@ class Lecturer {
         }
     }
 
+
     public void addCommitteeToLecturer(Committee committee) {
         if (numOfCommittees == committees.length){
             committees = (Committee[]) Utils.resizeArr(committees);
         }
         committees[numOfCommittees++] = committee;
     }
-
-
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(name).append('-').append(id).append(":\n")
+                .append("degree: ").append(degree).append(" in ").append(degreeName).append('\n')
+                .append("salary: ").append(salary).append('\n')
+                .append("department: ")
+                .append(department != null ? department + "\n" : "not in a department\n")
+                .append("committees: ");
+        if (numOfCommittees == 0) {
+            sb.append("not in any committees");
+        } else {
+            sb.append("[");
+            for (int i = 0; i < numOfCommittees; i++) {
+                sb.append(committees[i].getName());
+                if (i != numOfCommittees - 1) {
+                    sb.append(", ");
+                }
+            }
+            sb.append("]");
+        }
+        return sb.toString();
+    }
 }

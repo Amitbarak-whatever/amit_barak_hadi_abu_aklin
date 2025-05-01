@@ -7,16 +7,31 @@ import java.util.Scanner;
 // Amit Barak -322605080 ; Hadi Abu-Aklin - 211670641
 
 public class Main {
+//    private static final String[] MENU = {
+//            "Exit Program",
+//            "Add Lecturer",
+//            "Add Committee",
+//            "Add Division",
+//            "Add lecturer to committee",
+//            "Show average salary for ALL lecturers",
+//            "Show average salary for lecturers in a specific division",
+//            "Show all lecturers",
+//            "Show all committees",
+//
+//    };
     private static final String[] MENU = {
-            "Exit Program",
-            "Add Lecturer",
-            "Add Committee",
-            "Add Division",
-            "Add lecturer to committee",
-            "Show average salary for ALL lecturers",
-            "Show average salary for lecturers in a specific division",
-            "Show all lecturers",
-            "Show all committees"
+            "Exit Program",                                      // 0
+            "Add Lecturer",                                      // 1
+            "Add Committee",                                     // 2
+            "Assign lecturer to committee",                         // 3
+            "Appoint new head of a committee",                   // 4
+            "Remove lecturer from committee",                    // 5
+            "Add Department",                                    // 6
+            "Show average salary for all lecturers",             // 7
+            "Show average salary for lecturers in a department", // 8
+            "Show all lecturers",                                // 9
+            "Show all committees",                               // 10
+            "Assign lecturer to a department"                    // 11
     };
     private static Scanner s;
 
@@ -31,17 +46,17 @@ public class Main {
             userChosen = showMenu(s);
             switch (userChosen) {
                 case 0 -> System.out.println("goodbye");
-                case 1 -> addLecturerMain(c1);
-                case 2 -> addCommitteeMain(c1);
-                case 3 -> lecturerToCommitteeMain(c1);
+                case 1 -> {s.nextLine();addLecturerMain(c1);}
+                case 2 -> {s.nextLine();addCommitteeMain(c1);}
+                case 3 -> {s.nextLine();lecturerToCommitteeMain(c1);}
                 case 4 -> newCommitteeHeadMain(c1);
                 case 5 -> removeFromCommitteeMain(c1);
                 case 6 -> addDepartmentMain(c1);
-                case 7 -> showAvgPayAll(c1);
+                case 7 -> showAvgPayAllMain(c1);
                 case 8 -> showAvgPayDepartmentMain(c1);
-                case 9 -> lecturersAllStats(c1);
-                case 10 -> committeesAllStats(c1);
-                case 11 -> lecturerToDepartment(c1);
+                case 9 -> lecturersAllStatsMain(c1);
+                case 10 -> committeesAllStatsMain(c1);
+                case 11 -> lecturerToDepartmentMain(c1);
                 default -> System.out.println("Unexpected value");
             }
         } while (userChosen != 0);
@@ -67,7 +82,6 @@ public class Main {
     }
 
     private static void addLecturerMain(College c1) {
-        s.nextLine();
         System.out.println("Enter lecturer's name: ");
         String name = s.nextLine();
         System.out.println("Enter lecturer's ID: ");
@@ -82,8 +96,14 @@ public class Main {
         }while(!degree.equals("FIRST") && !degree.equals("SECOND") && !degree.equals("DOC") && !degree.equals("PROF"));
         System.out.println("Enter lecturer's degree name:");
         String degreeName = s.nextLine();
-        System.out.println("Enter lecturer's salary:");
-        double salary = s.nextDouble();
+        double salary;
+        do{
+            System.out.println("Enter lecturer's salary:");
+            salary = s.nextInt();
+            if (salary <= 0){
+                System.out.println("invalid number please enter a new one");
+            }
+        }while (salary <= 0);
         s.nextLine();
         ActionStatus res = College.addLecturerUser(c1 ,name, id, degree, degreeName, salary);
         System.out.println(res);
@@ -99,7 +119,6 @@ public class Main {
     }
 
     private static void addCommitteeMain(College c1) {
-        s.nextLine();
         System.out.println("Enter committee's name:" );
         String name = s.nextLine();
         System.out.println("Enter committee's head:" );
@@ -118,7 +137,6 @@ public class Main {
     }
 
     private static void addDepartmentMain(College c1) {
-        s.nextLine();
         System.out.println("Enter department's name: ");
         String name = s.nextLine();
         System.out.println("Enter number of students: ");
@@ -138,12 +156,12 @@ public class Main {
     }
 
     private static void lecturerToCommitteeMain(College c1) {
-        s.nextLine();
         System.out.println("Enter lecturer's name: " );
         String nameL = s.nextLine();
         System.out.println("Enter committee's name: " );
         String nameC = s.nextLine();
         ActionStatus res = College.lecturerToCommitteeUser(c1,nameL,nameC);
+        System.out.println(res);
         if (res != ActionStatus.SUCCESS) {
             System.out.println("would you like to retry? yes/no");
             String redo = s.nextLine();
@@ -151,6 +169,27 @@ public class Main {
                 case "yes" -> {lecturerToCommitteeMain(c1);return;}
                 case "no" -> {return;}
                 default -> System.out.println("invalid answer, returning to main menu");
+            }
+        }
+    }
+
+    private static void lecturerToDepartmentMain(College c1) {
+        s.nextLine();
+        System.out.println("Enter Lecturer's name: ");
+        String lecturerName = s.nextLine();
+        System.out.println("Enter Department's name: ");
+        String departmentName = s.nextLine();
+
+        ActionStatus res = College.lecturerToDepartmentUser(c1, lecturerName, departmentName);
+        System.out.println(res);
+
+        if (res != ActionStatus.SUCCESS) {
+            System.out.println("Would you like to retry? yes/no");
+            String redo = s.nextLine();
+            switch (redo.toLowerCase()) {
+                case "yes" -> lecturerToDepartmentMain(c1);
+                case "no" -> { return; }
+                default -> System.out.println("Invalid answer, returning to main menu.");
             }
         }
     }
@@ -206,7 +245,7 @@ public class Main {
         }
     }
 
-    private static void showAvgPayAll(College c1) {
+    private static void showAvgPayAllMain(College c1) {
         double res = College.avgPayAllUser(c1);
         if (res == -1){
             System.out.println("College" + c1.getName() + " doesn't have any lecturers");
@@ -216,12 +255,20 @@ public class Main {
 
     }
 
+    private static void committeesAllStatsMain(College c1) {
+        System.out.println(College.committeesAllStatsUser(c1));
+    }
+
+    private static void lecturersAllStatsMain(College c1) {
+        System.out.println(College.lecturersAllStatsUser(c1));
+    }
+
     private static int showMenu(Scanner s) {
         System.out.println("\n====== Menu =======");
         for (int i = 0; i < MENU.length; i++) {
             System.out.println(i + ". " + MENU[i]);
         }
-        System.out.println("Please enter your choice : ");
+        System.out.println("Please enter your choice: ");
         return s.nextInt();
     }
 
@@ -233,6 +280,7 @@ public class Main {
     }
     // Amit Barak -322605080 ; Hadi Abu-Aklin - 211670641
 }
+
 
 
 //        if (isExist(name,lecturers,numOfLecturers)){

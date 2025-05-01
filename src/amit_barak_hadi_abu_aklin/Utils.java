@@ -29,6 +29,19 @@ public class Utils {
         return numOf;
     }
 
+    public static String arrayPrint(Object[] arr, int numInArr){
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        for (int i = 0; i < numInArr; i++) {
+            sb.append(arr[i]);
+            if (i != numInArr - 1) {
+                sb.append(", ");
+            }
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
 //    public static ActionStatus findByName(Object[] arr, String toFind, int numOf){
 //        Class g = Object[].getClass();
 //        for(int i = 0 ; i < numOf ; i++){

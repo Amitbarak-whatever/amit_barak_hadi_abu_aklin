@@ -4,7 +4,7 @@ public enum ActionStatus {
     SUCCESS("Success!"),
     LECTURER_NOT_EXIST_IN_COMM("Lecturer does not exist in committee."),
     LECTURER_NOT_EXIST_IN_DEP("Lecturer does not exist in department."),
-    LECTURER_NOT_EXIST("Lecturer does not."),
+    LECTURER_NOT_EXIST("Lecturer does not exist."),
     DEPARTMENT_NOT_EXIST("Department does not exist."),
     COMMITTEE_NOT_EXIST("Committee does not exist."),
     LECTURER_EXIST("lecturer already exists."),

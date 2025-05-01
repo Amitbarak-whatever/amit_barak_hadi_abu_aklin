@@ -39,7 +39,7 @@ public class College {
             return -1.00;
         }
         for ( int i = 0 ; i < numOfLecturers ; i++){
-            res += allLecturers[numOfLecturers].getSalary();
+            res += allLecturers[i].getSalary();
         }
         return res/numOfLecturers;
     }
@@ -169,6 +169,60 @@ public class College {
         return selectedCommittee.removeFromCommittee(selectedLecturer);
     }
 
+    public static String committeesAllStatsUser(College college) {
+        return college.committeesAllStatsCollege();
+    }
+
+    private String committeesAllStatsCollege() {
+        if (numOfCommittees == 0) {
+            return "No committees in the college yet.";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < numOfCommittees; i++) {
+            sb.append(allCommittees[i].toString()).append("\n");
+        }
+        return sb.toString();
+    }
+
+    public static String lecturersAllStatsUser(College college) {
+        return college.lecturersAllStatsCollege();
+    }
+
+    private String lecturersAllStatsCollege() {
+        if (numOfLecturers == 0) {
+            return "No lecturers in the college yet.";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < numOfLecturers; i++) {
+            sb.append(allLecturers[i].toString()).append("\n");
+        }
+        return sb.toString();
+    }
+
+    public static ActionStatus lecturerToDepartmentUser(College college, String lecturerName, String departmentName) {
+        return college.lecturerToDepartmentCollege(lecturerName, departmentName);
+    }
+
+    private ActionStatus lecturerToDepartmentCollege(String lecturerName, String departmentName) {
+        Lecturer lecturer = findLecturerByName(lecturerName);
+        Department department = findDepartmentByName(departmentName);
+
+        if (lecturer == null && department == null) {
+            return ActionStatus.L_C_NOT_EXIST;
+        }
+        if (lecturer == null) {
+            return ActionStatus.LECTURER_NOT_EXIST;
+        }
+        if (department == null) {
+            return ActionStatus.DEPARTMENT_NOT_EXIST;
+        }
+
+        boolean success = department.addLecturerToDepartment(lecturer);
+        if (!success) {
+            return ActionStatus.LECTURER_EXIST;
+        }
+        return ActionStatus.SUCCESS;
+    }
 
     private Lecturer findLecturerByName(String name) {
         for (int i = 0; i < numOfLecturers; i++) {

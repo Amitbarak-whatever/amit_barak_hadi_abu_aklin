@@ -56,17 +56,20 @@ class Committee {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Committee Name: ").append(name).append("\n");
-        sb.append("Head of Committee: ").append(head.getName()).append("\n");
-        sb.append("Lecturers in Committee: ").append("\n");
+        sb.append("Committee Name: ").append(name).append('\n')
+        .append("Head of Committee: ").append(head.getName()).append('\n')
+        .append("Lecturers in Committee: ");
         if (numOfLecturers == 0) {
-            sb.append(" No lecturers assigned yet.");
+            sb.append("No lecturers assigned yet.");
         } else {
+            sb.append("[");
             for (int i = 0; i < numOfLecturers; i++) {
-                if (lecturers[i] != null){
-                    sb.append(lecturers[i].getName()).append("\n");
+                sb.append(lecturers[i].getName());
+                if (i != numOfLecturers - 1) {
+                    sb.append(", ");
                 }
             }
+            sb.append("]");
         }
         return sb.toString();
     }
