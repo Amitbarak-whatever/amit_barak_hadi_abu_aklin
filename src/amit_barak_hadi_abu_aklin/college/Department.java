@@ -11,16 +11,9 @@ class Department {
     public Department(String name, int numOfStudents) {
         this.name = name;
         this.lecturers = new Lecturer[0];
-        setNumOfStudents(numOfStudents);
+        this.numOfStudents = numOfStudents;
     }
 
-    public boolean setNumOfStudents(int numOfStudents) {
-        if (0< numOfStudents) {
-            this.numOfStudents = numOfStudents;
-            return true;
-        }
-        return false;
-    }
     public boolean addLecturerToDepartment(Lecturer lecturer) {
         if (lecturer.getDepartment() != null) {
             return false;

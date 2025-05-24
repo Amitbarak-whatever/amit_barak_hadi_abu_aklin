@@ -18,6 +18,13 @@ class Lecturer {
         this.committees = new Committee[0];
         setDegree(degree);
     }
+    public Lecturer(double salary,String degreeName, String id, String name) {
+        this.id = id;
+        this.name = name;
+        this.salary = salary;
+        this.degreeName = degreeName;
+        this.committees = new Committee[0];
+    }
 
     public String getName() {
         return name;

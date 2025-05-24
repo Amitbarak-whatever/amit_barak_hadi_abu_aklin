@@ -138,9 +138,14 @@ public class Main {
     private static void addDepartmentMain(College c1) {
         System.out.println("Enter department's name: ");
         String name = s.nextLine();
-        System.out.println("Enter number of students: ");
-        int num = s.nextInt();
-        s.nextLine();
+        int num;
+        do{
+            System.out.println("Enter number of students: ");
+            num = s.nextInt();
+            if (num < 0){
+                System.out.println("invalid number please enter a new one");
+            }
+        }while (num < 0);
         ActionStatus res = College.addDepartmentUser(c1,name,num);
         System.out.println(res);
         if (res != ActionStatus.SUCCESS){
