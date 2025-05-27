@@ -226,6 +226,17 @@ public class College {
         return ActionStatus.SUCCESS;
     }
 
+    public static ActionStatus cloneCommitteeUser(College c1, String nameOfCommittee) {
+        return c1.cloneCommitteeCollege(nameOfCommittee);
+    }
+
+    private ActionStatus cloneCommitteeCollege(String nameOfCommittee) {
+        Committee original = findCommitteeByName(nameOfCommittee);
+        if (original == null) return ActionStatus.COMMITTEE_NOT_EXIST;
+        Committee clone = original.cloneCommittee();
+        return this.addCommitteeCollege(clone);
+    }
+
     private Lecturer findLecturerByName(String name) {
         for (int i = 0; i < numOfLecturers; i++) {
             if (allLecturers[i].getName().equals(name)) {

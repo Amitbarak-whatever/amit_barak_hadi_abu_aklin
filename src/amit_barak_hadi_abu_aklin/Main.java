@@ -57,6 +57,7 @@ public class Main {
                 case 9 -> lecturersAllStatsMain(c1);
                 case 10 -> committeesAllStatsMain(c1);
                 case 11 -> {s.nextLine();lecturerToDepartmentMain(c1);}
+                case 14 -> { s.nextLine(); cloneCommitteeMain(c1); }
                 default -> System.out.println("Unexpected value");
             }
         } while (userChosen != 0);
@@ -265,6 +266,13 @@ public class Main {
         System.out.println(College.lecturersAllStatsUser(c1));
     }
 
+    private static void cloneCommitteeMain(College c1) {
+        System.out.println("Enter name of committee to clone:");
+        String name = s.nextLine();
+        ActionStatus res = College.cloneCommitteeUser(c1, name);
+        System.out.println(res);
+    }
+
     private static int showMenu(Scanner s) {
         System.out.println("\n====== Menu =======");
         for (int i = 0; i < MENU.length; i++) {
@@ -285,20 +293,3 @@ public class Main {
 
 
 
-//        if (isExist(name,lecturers,numOfLecturers)){
-//        System.out.println(name + " already exist...\nwould you like to add a different name? yes/no");
-//String redo = s.next();
-//            switch (redo) {
-//        case "yes" -> {
-//addLecturerMain();
-//                    return;
-//                            }
-//                            case "no" -> {return;}
-//default -> System.out.println("what? im returning you to the menu");
-//            }
-//                    }
-//                    if (numOfLecturers == lecturers.length){
-//lecturers = copy(lecturers, numOfLecturers == 0 ? 2: numOfLecturers * 2);
-//        }
-//lecturers[numOfLecturers++] = name;
-//    }

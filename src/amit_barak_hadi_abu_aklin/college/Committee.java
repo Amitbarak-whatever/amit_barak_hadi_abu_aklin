@@ -52,7 +52,13 @@ class Committee {
         return head;
     }
 
-
+    public Committee cloneCommittee() {
+        Committee clone = new Committee("new-" + this.name, this.head);
+        for (int i = 0; i < this.numOfLecturers; i++) {
+            clone.addLecturerToCommitteeCollege(this.lecturers[i]);
+        }
+        return clone;
+    }
 
     @Override
     public String toString() {

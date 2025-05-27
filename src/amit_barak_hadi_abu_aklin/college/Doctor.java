@@ -19,6 +19,5 @@ class Doctor extends Lecturer {
             return "both have the same amount of papers";
         }
         return  doc1Papers > doc2Papers ? doc1.getName() + "has more papers" : doc2.getName() + "has more papers";
-
     }
 }
