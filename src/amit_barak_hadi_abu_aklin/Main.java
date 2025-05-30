@@ -1,6 +1,9 @@
 package amit_barak_hadi_abu_aklin;
 
 import amit_barak_hadi_abu_aklin.college.College;
+import amit_barak_hadi_abu_aklin.college.Exceptions.CommitteeException;
+import amit_barak_hadi_abu_aklin.college.Exceptions.DepartmentException;
+import amit_barak_hadi_abu_aklin.college.Exceptions.LecturerException;
 
 import java.util.Scanner;
 
@@ -31,10 +34,13 @@ public class Main {
             "Show average salary for lecturers in a department", // 8
             "Show all lecturers",                                // 9
             "Show all committees",                               // 10
-            "Assign lecturer to a department"                    // 11
+            "Assign lecturer to a department",                   // 11
+            "Compare between Doctors/Professors",                // 12
+            "Compare between Committees",                        // 13
+            "Clone Committee"                                    // 14
     };
     private static Scanner s;
-
+    private static boolean exceptionOccurred = false;
     private static void run() {
 
         System.out.println("enter college name:");
@@ -43,6 +49,7 @@ public class Main {
 
         int userChosen;
         do {
+            exceptionOccurred = false;
             userChosen = showMenu(s);
             switch (userChosen) {
                 case 0 -> System.out.println("goodbye");
@@ -57,6 +64,8 @@ public class Main {
                 case 9 -> lecturersAllStatsMain(c1);
                 case 10 -> committeesAllStatsMain(c1);
                 case 11 -> {s.nextLine();lecturerToDepartmentMain(c1);}
+                case 12 -> { s.nextLine(); compareDoctorsMain(c1);}
+                case 13 -> { s.nextLine(); compareCommitteesMain(c1); }
                 case 14 -> { s.nextLine(); cloneCommitteeMain(c1); }
                 default -> System.out.println("Unexpected value");
             }
@@ -68,20 +77,28 @@ public class Main {
         String committee = s.nextLine();
         System.out.println("Enter committee's lecturer:" );
         String lecturer = s.nextLine();
-        ActionStatus res = College.removeLecturerFromCommitteeUser(c1 , lecturer, committee);
-        System.out.println(res);
-        if (res != ActionStatus.SUCCESS) {
-            System.out.println("would you like to retry? yes/no");
-            String redo = s.nextLine();
-            switch (redo) {
-                case "yes" -> {removeFromCommitteeMain(c1);return;}
-                case "no" -> {return;}
-                default -> System.out.println("invalid answer, returning to main menu");
-            }
+        try {
+            College.removeLecturerFromCommitteeUser(c1, lecturer, committee);
+        }catch (LecturerException | CommitteeException e){
+            System.out.println(e.getMessage());
+            exceptionOccurred = true;
+        }finally {
+            if (exceptionOccurred) {
+                System.out.println("would you like to retry? yes/no");
+                String redo = s.nextLine();
+                switch (redo) {
+                    case "yes" -> {exceptionOccurred = false;removeFromCommitteeMain(c1);return;}
+                    case "no" -> {return;}
+                    default -> System.out.println("invalid answer, returning to main menu");
+                }
+            }else{
+                System.out.println("successful operation");}
         }
     }
 
     private static void addLecturerMain(College c1) {
+        int numOfPapers = -1;
+        String grantingBody = null;
         System.out.println("Enter lecturer's name: ");
         String name = s.nextLine();
         System.out.println("Enter lecturer's ID: ");
@@ -96,6 +113,19 @@ public class Main {
         }while(!degree.equals("FIRST") && !degree.equals("SECOND") && !degree.equals("DOC") && !degree.equals("PROF"));
         System.out.println("Enter lecturer's degree name:");
         String degreeName = s.nextLine();
+        if(degree.equals("DOC") || degree.equals("PROF")){
+            do{
+                System.out.println("Enter how many papers he wrote:");
+                numOfPapers = s.nextInt();
+                if (numOfPapers<0){
+                    System.out.println("can't have a negative number");
+                }
+            }while(numOfPapers<0);
+        }
+        if(degree.equals("PROF")){
+            System.out.println("Enter lecturer's granting body's name: ");
+            grantingBody = s.nextLine();
+        }
         double salary;
         do{
             System.out.println("Enter lecturer's salary:");
@@ -105,16 +135,22 @@ public class Main {
             }
         }while (salary <= 0);
         s.nextLine();
-        ActionStatus res = College.addLecturerUser(c1 ,name, id, degree, degreeName, salary);
-        System.out.println(res);
-        if (res != ActionStatus.SUCCESS) {
-            System.out.println("would you like to retry? yes/no");
-            String redo = s.nextLine();
-            switch (redo) {
-                case "yes" -> {addLecturerMain(c1);return;}
-                case "no" -> {return;}
-                default -> System.out.println("invalid answer, returning to main menu");
-            }
+        try{
+            College.addLecturerUser(c1 ,name, id, degree, degreeName, salary, numOfPapers , grantingBody);
+        }catch (LecturerException e){
+            System.out.println(e.getMessage());
+            exceptionOccurred = true;
+        }finally {
+            if(exceptionOccurred){
+                System.out.println("would you like to retry? yes/no");
+                String redo = s.nextLine();
+                switch (redo) {
+                    case "yes" -> {exceptionOccurred = false;addLecturerMain(c1);return;}
+                    case "no" -> {return;}
+                    default -> System.out.println("invalid answer, returning to main menu");
+                }
+            }else{
+                System.out.println("successful operation");}
         }
     }
 
@@ -123,16 +159,22 @@ public class Main {
         String name = s.nextLine();
         System.out.println("Enter committee's head:" );
         String head = s.nextLine();
-        ActionStatus res = College.addCommitteeUser(c1 ,name, head);
-        System.out.println(res);
-        if (res != ActionStatus.SUCCESS) {
-            System.out.println("would you like to retry? yes/no");
-            String redo = s.nextLine();
-            switch (redo) {
-                case "yes" -> {addCommitteeMain(c1);return;}
-                case "no" -> {return;}
-                default -> System.out.println("invalid answer, returning to main menu");
-            }
+        try{
+        College.addCommitteeUser(c1 ,name, head);
+        } catch (CommitteeException | LecturerException e){
+            System.out.println(e.getMessage());
+            exceptionOccurred = true;
+        }finally {
+            if (exceptionOccurred) {
+                System.out.println("would you like to retry? yes/no");
+                String redo = s.nextLine();
+                switch (redo) {
+                    case "yes" -> {exceptionOccurred = false;addCommitteeMain(c1);return;}
+                    case "no" -> {return;}
+                    default -> System.out.println("invalid answer, returning to main menu");
+                }
+            }else{
+                System.out.println("successful operation");}
         }
     }
 
@@ -147,16 +189,21 @@ public class Main {
                 System.out.println("invalid number please enter a new one");
             }
         }while (num < 0);
-        ActionStatus res = College.addDepartmentUser(c1,name,num);
-        System.out.println(res);
-        if (res != ActionStatus.SUCCESS){
-            System.out.println("would you like to retry? yes/no");
-            String redo = s.nextLine();
-            switch (redo){
-                case "yes" ->{addDepartmentMain(c1);return;}
-                case "no"-> {return;}
-                default -> System.out.println("invalid answer, returning to main menu");
-            }
+        try{
+        College.addDepartmentUser(c1,name,num);
+        }catch (DepartmentException e){
+            System.out.println(e.getMessage());
+            exceptionOccurred = true;
+        }finally {
+            if (exceptionOccurred){
+                System.out.println("would you like to retry? yes/no");
+                String redo = s.nextLine();
+                switch (redo){
+                    case "yes" ->{exceptionOccurred = false;addDepartmentMain(c1);return;}
+                    case "no"-> {return;}
+                    default -> System.out.println("invalid answer, returning to main menu");
+                }
+            }else{System.out.println("successful operation");}
         }
     }
 
@@ -165,16 +212,22 @@ public class Main {
         String nameL = s.nextLine();
         System.out.println("Enter committee's name: " );
         String nameC = s.nextLine();
-        ActionStatus res = College.lecturerToCommitteeUser(c1,nameL,nameC);
-        System.out.println(res);
-        if (res != ActionStatus.SUCCESS) {
-            System.out.println("would you like to retry? yes/no");
-            String redo = s.nextLine();
-            switch (redo) {
-                case "yes" -> {lecturerToCommitteeMain(c1);return;}
-                case "no" -> {return;}
-                default -> System.out.println("invalid answer, returning to main menu");
-            }
+        try{
+        College.lecturerToCommitteeUser(c1,nameL,nameC);}
+        catch (LecturerException|CommitteeException e){
+            System.out.println(e.getMessage());
+            exceptionOccurred = true;
+        }finally {
+            if (exceptionOccurred) {
+                System.out.println("would you like to retry? yes/no");
+                String redo = s.nextLine();
+                switch (redo) {
+                    case "yes" -> {exceptionOccurred = false;lecturerToCommitteeMain(c1);return;}
+                    case "no" -> {return;}
+                    default -> System.out.println("invalid answer, returning to main menu");
+                }
+            }else{
+                System.out.println("successful operation");}
         }
     }
 
@@ -183,18 +236,22 @@ public class Main {
         String lecturerName = s.nextLine();
         System.out.println("Enter Department's name: ");
         String departmentName = s.nextLine();
-
-        ActionStatus res = College.lecturerToDepartmentUser(c1, lecturerName, departmentName);
-        System.out.println(res);
-
-        if (res != ActionStatus.SUCCESS) {
-            System.out.println("Would you like to retry? yes/no");
-            String redo = s.nextLine();
-            switch (redo.toLowerCase()) {
-                case "yes" -> lecturerToDepartmentMain(c1);
-                case "no" -> { return;}
-                default -> System.out.println("Invalid answer, returning to main menu.");
-            }
+        try {
+            College.lecturerToDepartmentUser(c1, lecturerName, departmentName);
+        }catch (LecturerException | DepartmentException e){
+            System.out.println(e.getMessage());
+            exceptionOccurred = true;
+        }finally {
+            if (exceptionOccurred) {
+                System.out.println("Would you like to retry? yes/no");
+                String redo = s.nextLine();
+                switch (redo.toLowerCase()) {
+                    case "yes" -> {exceptionOccurred = false ;lecturerToDepartmentMain(c1); return;}
+                    case "no" -> { return;}
+                    default -> System.out.println("Invalid answer, returning to main menu.");
+                }
+            }else{
+                System.out.println("successful operation");}
         }
     }
 
@@ -203,48 +260,50 @@ public class Main {
         String committeeName = s.nextLine();
         System.out.println("Enter new head lecturer's name:");
         String lecturerName = s.nextLine();
-        ActionStatus res = College.setNewCommitteeHeadUser(c1, committeeName, lecturerName);
-        System.out.println(res);
-        if (res != ActionStatus.SUCCESS) {
-            System.out.println("Would you like to retry? yes/no");
-            String redo = s.nextLine();
-            switch (redo.toLowerCase()) {
-                case "yes" -> {
-                    newCommitteeHeadMain(c1);
-                    return;
+        try{
+            College.setNewCommitteeHeadUser(c1, committeeName, lecturerName);
+        }catch (LecturerException | CommitteeException e){
+            System.out.println(e.getMessage());
+            exceptionOccurred = true;
+        }finally {
+            if (exceptionOccurred) {
+                System.out.println("Would you like to retry? yes/no");
+                String redo = s.nextLine();
+                switch (redo.toLowerCase()) {
+                    case "yes" -> {
+                        exceptionOccurred = false;
+                        newCommitteeHeadMain(c1);
+                        return;
+                    }
+                    case "no" -> {
+                        return;
+                    }
+                    default -> System.out.println("Invalid answer, returning to main menu.");
                 }
-                case "no" -> {
-                    return;
-                }
-                default -> System.out.println("Invalid answer, returning to main menu.");
             }
         }
     }
 
     private static void showAvgPayDepartmentMain(College c1) {
-        String redo = null;
         System.out.println("which department do you want to check?");
         String department = s.nextLine();
-        double res = College.showAvgPayDepartmentUser(c1, department);
-        if (res == -1.00 ){
-            System.out.println(department+" not found \nWould you like to retry? yes/no");
-            redo = s.nextLine();
-        }
-        if (res == -2.00){
-            System.out.println(department+" doesn't have any lecturers ");
-        }
-        switch (redo) {
-            case "yes" -> {
-                showAvgPayDepartmentMain(c1);
-                return;
+        double res = 0 ;
+        try{
+        res = College.showAvgPayDepartmentUser(c1, department);
+        System.out.println("average department's pay is:" + res );
+        }catch (DepartmentException e){
+            System.out.println(e.getMessage());
+            exceptionOccurred = true;
+        }finally {
+            if (exceptionOccurred) {
+                System.out.println("Would you like to retry? yes/no");
+                String redo = s.nextLine();
+                switch (redo.toLowerCase()) {
+                    case "yes" -> {exceptionOccurred = false;showAvgPayDepartmentMain(c1);return;}
+                    case "no" -> {return;}
+                    default -> System.out.println("Invalid answer, returning to main menu.");
+                }
             }
-            case "no" -> {
-                return;
-            }
-            case null -> {
-                System.out.println(department + " salary average is: " + res);
-            }
-            default -> System.out.println("Invalid answer, returning to main menu.");
         }
     }
 
@@ -266,11 +325,89 @@ public class Main {
         System.out.println(College.lecturersAllStatsUser(c1));
     }
 
+    private static void compareDoctorsMain(College c1){
+        String res ="";
+        System.out.println("enter doctor's name:");
+        String d1 = s.nextLine();
+        System.out.println("enter doctor's name:");
+        String d2 = s.nextLine();
+        try{
+           res = College.compareDoctorsUser(c1,d1,d2);
+           System.out.println(res);
+        }catch (LecturerException e){
+            System.out.println(e.getMessage());
+            exceptionOccurred = true;
+        }finally {
+            if(exceptionOccurred){
+                System.out.println("would you like to retry? yes/no");
+                String redo = s.nextLine();
+                switch (redo) {
+                    case "yes" -> {exceptionOccurred = false;compareDoctorsMain(c1);return;}
+                    case "no" -> {return;}
+                    default -> System.out.println("invalid answer, returning to main menu");
+                }
+            }else{
+                System.out.println("successful operation");}
+        }
+    }
+
     private static void cloneCommitteeMain(College c1) {
         System.out.println("Enter name of committee to clone:");
         String name = s.nextLine();
-        ActionStatus res = College.cloneCommitteeUser(c1, name);
-        System.out.println(res);
+        try {
+            College.cloneCommitteeUser(c1, name);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            exceptionOccurred = true;
+        }finally {
+            if (exceptionOccurred) {
+                System.out.println("Would you like to retry? yes/no");
+                String redo = s.nextLine();
+                switch (redo.toLowerCase()) {
+                    case "yes" -> {exceptionOccurred = false ;cloneCommitteeMain(c1); return;}
+                    case "no" -> { return;}
+                    default -> System.out.println("Invalid answer, returning to main menu.");
+                }
+            }else{
+                System.out.println("Successful operation");
+            }
+        }
+
+
+    }
+
+    private static void compareCommitteesMain(College c1) {
+        System.out.println("Enter name of first committee:");
+        String name1 = s.nextLine();
+        System.out.println("Enter name of second committee:");
+        String name2 = s.nextLine();
+        int choice;
+        do{
+        System.out.println("Compare by:");
+        System.out.println("1. Number of lecturers");
+        System.out.println("2. Total number of papers by doctors");
+        choice = s.nextInt();
+        s.nextLine();
+        }while (choice <1 || choice >2);
+        String res = "";
+        try{
+        res = College.compareCommitteesUser(c1,name1, name2, choice);}
+        catch (CommitteeException e){
+            System.out.println(e.getMessage());
+            exceptionOccurred = true;
+        }finally {
+            if (exceptionOccurred) {
+                System.out.println("Would you like to retry? yes/no");
+                String redo = s.nextLine();
+                switch (redo.toLowerCase()) {
+                    case "yes" -> {exceptionOccurred = false ;compareCommitteesMain(c1); return;}
+                    case "no" -> { return;}
+                    default -> System.out.println("Invalid answer, returning to main menu.");
+                }
+            }else{
+                System.out.println(res);
+            }
+        }
     }
 
     private static int showMenu(Scanner s) {

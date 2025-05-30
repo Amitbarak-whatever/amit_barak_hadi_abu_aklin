@@ -1,6 +1,11 @@
 package amit_barak_hadi_abu_aklin.college;
 
-import amit_barak_hadi_abu_aklin.ActionStatus;
+
+import amit_barak_hadi_abu_aklin.college.Exceptions.CommitteeException;
+import amit_barak_hadi_abu_aklin.college.Exceptions.DepartmentException;
+import amit_barak_hadi_abu_aklin.college.Exceptions.LecturerException;
+
+
 
 public class College {
     private String name;
@@ -18,14 +23,14 @@ public class College {
         this.allCommittees = new Committee[0];
     }
 
-    public static ActionStatus addDepartmentUser(College college,String name, int num) {
+    public static void addDepartmentUser(College college,String name, int num) throws DepartmentException {
         Department d1 = new Department(name , num);
-        return college.addDepartmentCollege(d1);
+        college.addDepartmentCollege(d1);
 
     }
 
-    public static ActionStatus lecturerToCommitteeUser(College college, String nameOfLecturer, String nameOfCommittee) {
-        return college.lecturerToCommitteeCollege(nameOfLecturer, nameOfCommittee);
+    public static void lecturerToCommitteeUser(College college, String nameOfLecturer, String nameOfCommittee) throws CommitteeException ,LecturerException{
+        college.lecturerToCommitteeCollege(nameOfLecturer, nameOfCommittee);
     }
 
     public static double avgPayAllUser(College c1) {
@@ -43,20 +48,20 @@ public class College {
         return res/numOfLecturers;
     }
 
-    public static double showAvgPayDepartmentUser(College college,String department) {
+    public static double showAvgPayDepartmentUser(College college,String department) throws DepartmentException{
         return college.showAvgPayDepartmentCollege(department);
     }
 
-    private double showAvgPayDepartmentCollege(String strDepartment) {
+    private double showAvgPayDepartmentCollege(String strDepartment) throws DepartmentException {
         Department department = findDepartmentByName(strDepartment);
         if (department == null){
-            return -1.00;
+            throw new DepartmentException("department doesn't exist");
         }
         Lecturer[] depLecturers = department.getLecturers();
         int numOfLecturers = department.getNumOfLecturers();
         double res = 0.0 ;
         if (numOfLecturers == 0){
-            return -2;
+            return 0;
         }
         for (int i = 0 ; i < numOfLecturers; i ++){
             res += depLecturers[i].getSalary();
@@ -64,111 +69,114 @@ public class College {
         return res/numOfLecturers;
     }
 
-    private ActionStatus lecturerToCommitteeCollege(String nameOfLecturer, String nameOfCommittee){
+    private void lecturerToCommitteeCollege(String nameOfLecturer, String nameOfCommittee) throws CommitteeException , LecturerException{
         Lecturer l1 = findLecturerByName(nameOfLecturer);
         Committee c1 = findCommitteeByName(nameOfCommittee);
         if (l1 == null && c1 == null) {
-            return ActionStatus.L_C_NOT_EXIST;
+            throw new CommitteeException("both lecturer and committee doesn't exist");
         }
         if (l1 == null) {
-            return ActionStatus.LECTURER_NOT_EXIST;
+            throw new LecturerException("lecturer doesn't exist");
         }
         if (c1 == null) {
-            return ActionStatus.COMMITTEE_NOT_EXIST;
+            throw new CommitteeException("committee doesn't exist");
         }
         if (l1.equals(c1.getHead())){
-            return ActionStatus.L_IS_HEAD;
+            throw new LecturerException("lecturer is already head of committee");
         }
         c1.addLecturerToCommitteeCollege(l1);
-        return ActionStatus.SUCCESS;
     }
 
-    private ActionStatus addDepartmentCollege(Department department) {
+    private void addDepartmentCollege(Department department) throws DepartmentException{
         if(Utils.isExist(allDepartments , numOfDepartments, department)){
-            return ActionStatus.DEPARTMENT_EXIST;
+            throw new DepartmentException("department with this name already exists");
         }
         if (numOfDepartments == allDepartments.length){
             allDepartments = (Department[]) Utils.resizeArr(allDepartments);
         }
         allDepartments[numOfDepartments++] = department;
-        return ActionStatus.SUCCESS;
     }
 
-    public static ActionStatus addLecturerUser(College college, String name, String id, String degree, String degreeName, double salary) {
-        Lecturer l1 = new Lecturer( salary , degree, degreeName , id ,name );
-        return college.addLecturerCollege(l1);
+    public static void addLecturerUser(College college, String name, String id, String degree, String degreeName, double salary ,int numOfPapers , String grantingBody) throws LecturerException {
+        Lecturer l1;
+        if (grantingBody != null){
+             l1 = new Professor(salary , degree, degreeName , id ,name , numOfPapers , grantingBody);
+        }else{
+        if (0<numOfPapers){
+             l1 = new Doctor(salary , degree, degreeName , id ,name , numOfPapers);
+        }else{l1 = new Lecturer( salary , degree, degreeName , id ,name );
+        }}
+        college.addLecturerCollege(l1);
     }
 
-    private ActionStatus addLecturerCollege(Lecturer lecturer) {
+    private void addLecturerCollege(Lecturer lecturer) throws LecturerException{
         if(Utils.isExist(allLecturers , numOfLecturers, lecturer)){
-            return ActionStatus.LECTURER_EXIST;
+            throw new LecturerException("Lecturer with this name already exists");
         }
         if (numOfLecturers == allLecturers.length){
             allLecturers = (Lecturer[]) Utils.resizeArr(allLecturers);
         }
         allLecturers[numOfLecturers++] = lecturer;
-        return ActionStatus.SUCCESS;
     }
 
-    public static ActionStatus addCommitteeUser(College college, String name, String headOf) {
+    public static void addCommitteeUser(College college, String name, String headOf) throws CommitteeException , LecturerException{
         Committee c1 = new Committee(name,college.findLecturerByName(headOf));
-        return college.addCommitteeCollege(c1);
+        college.addCommitteeCollege(c1);
     }
 
-    private ActionStatus addCommitteeCollege(Committee committee) {
+    private void addCommitteeCollege(Committee committee) throws CommitteeException , LecturerException {
         if(Utils.isExist(allCommittees , numOfCommittees, committee)){
-            return ActionStatus.COMMITTEE_EXIST;
+           throw new CommitteeException("committee already exist");
         }
         if (committee.getHead() == null) {
-            return ActionStatus.LECTURER_NOT_EXIST;
+            throw new LecturerException("lecturer doesn't exist");
         }
         Degree headsDegree = committee.getHead().getDegree();
         if ( headsDegree != Degree.DOC && headsDegree != Degree.PROF){
-            return ActionStatus.LECTURER_NOT_QUALIFIED;
+            throw new LecturerException("lecturer isn't qualified to be committee's head");
         }
         if (numOfCommittees == allCommittees.length){
             allCommittees = (Committee[]) Utils.resizeArr(allCommittees);
         }
         allCommittees[numOfCommittees++] = committee;
-        return ActionStatus.SUCCESS;
     }
 
-    public static ActionStatus setNewCommitteeHeadUser(College college,String committeeName, String lecturerName) {
-        return  college.setNewCommitteeHeadCollege(committeeName, lecturerName);
+    public static void setNewCommitteeHeadUser(College college,String committeeName, String lecturerName) throws LecturerException , CommitteeException{
+        college.setNewCommitteeHeadCollege(committeeName, lecturerName);
     }
 
-    private ActionStatus setNewCommitteeHeadCollege(String committeeName, String lecturerName) {
+    private void setNewCommitteeHeadCollege(String committeeName, String lecturerName) throws LecturerException , CommitteeException{
         Lecturer selectedLecturer = findLecturerByName(lecturerName);
         Committee selectedCommittee = findCommitteeByName(committeeName);
         if (selectedLecturer == null && selectedCommittee == null) {
-            return ActionStatus.L_C_NOT_EXIST;
+            throw new CommitteeException("lecturer and committee doesn't exist");
         }
         if (selectedCommittee == null) {
-            return ActionStatus.COMMITTEE_NOT_EXIST;
+            throw new CommitteeException("committee doesn't exist");
         }
         if (selectedLecturer == null) {
-            return ActionStatus.LECTURER_NOT_EXIST;
+            throw new LecturerException("lecturer doesn't exist");
         }
-        return selectedCommittee.setHeadOf(selectedLecturer);
+        selectedCommittee.setHeadOf(selectedLecturer);
     }
 
-    public static ActionStatus removeLecturerFromCommitteeUser(College college, String lecturer, String committee) {
-        return college.removeLecturerFromCommitteeCollege(committee , lecturer);
+    public static void removeLecturerFromCommitteeUser(College college, String lecturer, String committee) throws LecturerException, CommitteeException{
+        college.removeLecturerFromCommitteeCollege(committee , lecturer);
     }
 
-    public ActionStatus removeLecturerFromCommitteeCollege( String committeeName, String lecturerName) {
+    public void removeLecturerFromCommitteeCollege( String committeeName, String lecturerName) throws LecturerException, CommitteeException {
         Committee selectedCommittee = findCommitteeByName(committeeName);
         Lecturer selectedLecturer = findLecturerByName(lecturerName);
         if (selectedLecturer == null && selectedCommittee == null) {
-            return ActionStatus.L_C_NOT_EXIST;
+            throw new CommitteeException("lecturer and committee doesn't exist");
         }
         if (selectedCommittee == null) {
-            return ActionStatus.COMMITTEE_NOT_EXIST;
+            throw new CommitteeException("committee doesn't exist");
         }
         if (selectedLecturer == null) {
-            return ActionStatus.LECTURER_NOT_EXIST;
+            throw new LecturerException("lecturer doesn't exist");
         }
-        return selectedCommittee.removeFromCommittee(selectedLecturer);
+        selectedCommittee.removeFromCommittee(selectedLecturer);
     }
 
     public static String committeesAllStatsUser(College college) {
@@ -201,40 +209,82 @@ public class College {
         return sb.toString();
     }
 
-    public static ActionStatus lecturerToDepartmentUser(College college, String lecturerName, String departmentName) {
-        return college.lecturerToDepartmentCollege(lecturerName, departmentName);
+    public static void lecturerToDepartmentUser(College college, String lecturerName, String departmentName) throws DepartmentException , LecturerException{
+        college.lecturerToDepartmentCollege(lecturerName, departmentName);
     }
 
-    private ActionStatus lecturerToDepartmentCollege(String lecturerName, String departmentName) {
+    private void lecturerToDepartmentCollege(String lecturerName, String departmentName) throws DepartmentException , LecturerException{
         Lecturer lecturer = findLecturerByName(lecturerName);
         Department department = findDepartmentByName(departmentName);
 
         if (lecturer == null && department == null) {
-            return ActionStatus.L_C_NOT_EXIST;
+            throw new DepartmentException("lecturer and department doesn't exist");
         }
         if (lecturer == null) {
-            return ActionStatus.LECTURER_NOT_EXIST;
+            throw new LecturerException("lecturer doesn't exist");
         }
         if (department == null) {
-            return ActionStatus.DEPARTMENT_NOT_EXIST;
+            throw new DepartmentException("department doesn't exist");
         }
-
-        boolean success = department.addLecturerToDepartment(lecturer);
-        if (!success) {
-            return ActionStatus.LECTURER_EXIST;
-        }
-        return ActionStatus.SUCCESS;
+        department.addLecturerToDepartment(lecturer);
     }
 
-    public static ActionStatus cloneCommitteeUser(College c1, String nameOfCommittee) {
-        return c1.cloneCommitteeCollege(nameOfCommittee);
+    public static void cloneCommitteeUser(College c1, String nameOfCommittee) throws LecturerException, CommitteeException, CloneNotSupportedException {
+        c1.cloneCommitteeCollege(nameOfCommittee);
     }
 
-    private ActionStatus cloneCommitteeCollege(String nameOfCommittee) {
+    private void cloneCommitteeCollege(String nameOfCommittee) throws CommitteeException, CloneNotSupportedException, LecturerException {
         Committee original = findCommitteeByName(nameOfCommittee);
-        if (original == null) return ActionStatus.COMMITTEE_NOT_EXIST;
-        Committee clone = original.cloneCommittee();
-        return this.addCommitteeCollege(clone);
+        if (original == null) {
+            throw new CommitteeException("committee doesn't exist");
+        }
+        Committee clone = original.clone();
+        this.addCommitteeCollege(clone);
+    }
+
+    public static String compareDoctorsUser(College c1 , String d1 , String d2) throws  LecturerException {
+       return c1.compareDoctorsCollege(d1,d2);
+    }
+
+    private String compareDoctorsCollege(String d1, String d2) throws  LecturerException {
+        Lecturer doc1 = findLecturerByName(d1), doc2 = findLecturerByName(d2);
+        if (doc1 == null || doc2 == null) {
+            throw new LecturerException("one or both do not exist");
+        }
+        int res;
+        if (doc1 instanceof Doctor && doc2 instanceof Doctor) {
+            res = ((Doctor) doc1).compareTo((Doctor) doc2);
+        } else {
+            throw new LecturerException("one of them or both are not doctors of professors");
+        }
+        if (res == 0) return "Both lads have the same number of papers.";
+        return res > 0 ? doc1.name + " has more papers." : doc2.name + " has more papers.";
+    }
+
+
+    public static String compareCommitteesUser(College c1,String name1, String name2, int mode) throws CommitteeException{
+        return c1.compareCommitteesCollege(name1,name2,mode);
+    }
+
+    private String compareCommitteesCollege(String name1, String name2, int mode) throws CommitteeException {
+        Committee c1 = findCommitteeByName(name1);
+        Committee c2 = findCommitteeByName(name2);
+        if (c1 == null || c2 == null) {
+            throw new CommitteeException("one or both of the committees doesn't exist");
+        }
+        int res = 0;
+        switch (mode) {
+            case 1->{
+                CompareCommitteeByPapers comparatorP = new CompareCommitteeByPapers();
+                res =  comparatorP.compare(c1, c2);
+            }
+            case 2 ->{
+                CompareCommitteeByNumOfLecturers comparatorL = new CompareCommitteeByNumOfLecturers();
+                res = comparatorL.compare(c1, c2);
+            }
+        }
+        if (res == 0) return "Both committees have the same number of papers.";
+        return res > 0 ? c1.getName() + " has more papers." : c2.getName() + " has more papers.";
     }
 
     private Lecturer findLecturerByName(String name) {
@@ -268,10 +318,73 @@ public class College {
         return name;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("College Name: ").append(name).append("\n");
+        sb.append("Lecturers: \n");
+        if (numOfLecturers == 0) {
+            sb.append("No lecturers assigned yet.");
+        } else {
+            sb.append("[");
+            for (int i = 0; i < numOfLecturers; i++) {
+                sb.append(allLecturers[i].getName());
+                if (i != numOfLecturers - 1) {
+                    sb.append(", ");
+                }
+            }
+            sb.append("]");
+        }
+        sb.append('\n');
+        sb.append("Departments: \n");
+        if (numOfDepartments == 0) {
+            sb.append("No Departments assigned yet.");
+        } else {
+            sb.append("[");
+            for (int i = 0; i < numOfDepartments; i++) {
+                sb.append(allDepartments[i].getName());
+                if (i != numOfDepartments - 1) {
+                    sb.append(", ");
+                }
+            }
+            sb.append("]");
+        }
+        sb.append('\n');
+        sb.append("Committee: \n");
+        if (numOfCommittees == 0) {
+            sb.append("No Departments assigned yet.");
+        } else {
+            sb.append("[");
+            for (int i = 0; i < numOfCommittees; i++) {
+                sb.append(allCommittees[i].getName());
+                if (i != numOfCommittees - 1) {
+                    sb.append(", ");
+                }
+            }
+            sb.append("]");
+        }
+        return sb.toString();
+    }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj){
+            return true;
+        }
+        if (obj == null){
+            return false;
+        }
+        if (this.getClass() != obj.getClass()) {
+            return false;
+        }
+        College other = (College) obj;
+        if (!other.name.equals(this.name)){
+            return false;
+        }
+        return true;
+    }
 
-
-//    private static void showLecturersAll() {
+    //   private static void showLecturersAll() {
 //        System.out.print("[ ");
 //        for (int i = 0; i < numOfLecturers; i++) {
 //            if (i == numOfLecturers - 1){

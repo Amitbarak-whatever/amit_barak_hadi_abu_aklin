@@ -1,5 +1,7 @@
 package amit_barak_hadi_abu_aklin.college;
 
+import amit_barak_hadi_abu_aklin.college.Exceptions.LecturerException;
+
 import java.util.Arrays;
 
 class Department {
@@ -14,16 +16,16 @@ class Department {
         this.numOfStudents = numOfStudents;
     }
 
-    public boolean addLecturerToDepartment(Lecturer lecturer) {
+    public void addLecturerToDepartment(Lecturer lecturer) throws LecturerException {
         if (lecturer.getDepartment() != null) {
-            return false;
+           throw new LecturerException("lecturer already in a department");
         }
         if (numOfLecturers == lecturers.length) {
             lecturers = Arrays.copyOf(lecturers, lecturers.length == 0 ? 2 : lecturers.length * 2);
         }
         lecturers[numOfLecturers++] = lecturer;
         lecturer.setDepartment(this);
-        return true;
+
     }
 
     public String getName() {
@@ -69,8 +71,41 @@ class Department {
         }
         return  sum1 > sum2 ? d1.getName() + "has more papers" : d2.getName() + "has more papers";
     }
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Department Name: ").append(name).append("\n");
+        sb.append("Number of Students: ").append(numOfStudents).append("\n");
+        sb.append("Lecturers in Department: \n");
+        if (numOfLecturers == 0) {
+            sb.append(" No lecturers assigned yet. \n");
+        } else {
+            for (int i = 0; i < numOfLecturers; i++) {
+                if (lecturers[i] != null) {
+                    sb.append("- ").append(lecturers[i].getName()).append("\n");
+                }
+            }
+        }
+        return sb.toString();
+    }
 
-
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj){
+            return true;
+        }
+        if (obj == null){
+            return false;
+        }
+        if (this.getClass() != obj.getClass()) {
+            return false;
+        }
+        Department other = (Department) obj;
+        if (!other.name.equals(this.name)){
+            return false;
+        }
+        return true;
+    }
 
 
 //    public boolean removeFromDepartment(Lecturer lecturer){
@@ -81,24 +116,7 @@ class Department {
 //        }
 //    }
 //
-//    @Override
-//    public String toString() {
-//        StringBuilder sb = new StringBuilder();
-//        sb.append("Department Name: ").append(name).append("\n");
-//        sb.append("Number of Students: ").append(numOfStudents).append("\n");
-//        sb.append("Lecturers in Department: \n");
-//
-//        if (numOfLecturers == 0) {
-//            sb.append(" No lecturers assigned yet. \n");
-//        } else {
-//            for (int i = 0; i < numOfLecturers; i++) {
-//                if (lecturers[i] != null) {
-//                    sb.append("- ").append(lecturers[i].getName()).append("\n");
-//                }
-//            }
-//        }
-//        return sb.toString();
-//    }
+
 
 
 }

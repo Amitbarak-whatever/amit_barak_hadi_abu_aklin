@@ -1,14 +1,14 @@
 package amit_barak_hadi_abu_aklin.college;
 
 class Lecturer {
-    private double salary;
-    private String name;
-    private String id;
-    private Degree degree;
-    private String degreeName;
-    private Department department;
-    private Committee[] committees;
-    private int numOfCommittees;
+    protected double salary;
+    protected String name;
+    protected String id;
+    protected Degree degree;
+    protected String degreeName;
+    protected Department department;
+    protected Committee[] committees;
+    protected int numOfCommittees;
 
     public Lecturer(double salary,String degree,String degreeName, String id, String name) {
         this.id = id;
@@ -97,4 +97,24 @@ class Lecturer {
         }
         return sb.toString();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj){
+            return true;
+        }
+        if (obj == null){
+            return false;
+        }
+        if (this.getClass() != obj.getClass()) {
+            return false;
+        }
+        Lecturer other = (Lecturer) obj;
+        if (!other.name.equals(this.name)){
+            return false;
+        }
+        return true;
+    }
+
+
 }
