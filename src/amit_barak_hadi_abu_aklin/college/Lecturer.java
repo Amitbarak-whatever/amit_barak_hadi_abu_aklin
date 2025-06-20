@@ -1,29 +1,27 @@
 package amit_barak_hadi_abu_aklin.college;
 
-class Lecturer {
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.ArrayList;
+
+class Lecturer implements Serializable {
     protected double salary;
     protected String name;
     protected String id;
     protected Degree degree;
     protected String degreeName;
     protected Department department;
-    protected Committee[] committees;
-    protected int numOfCommittees;
+    protected ArrayList<Committee> committees;
+    @Serial
+    private static final long serialVersionUID = 1L ;
 
     public Lecturer(double salary,String degree,String degreeName, String id, String name) {
         this.id = id;
         this.name = name;
         this.salary = salary;
         this.degreeName = degreeName;
-        this.committees = new Committee[0];
+        this.committees = new ArrayList<>();
         setDegree(degree);
-    }
-    public Lecturer(double salary,String degreeName, String id, String name) {
-        this.id = id;
-        this.name = name;
-        this.salary = salary;
-        this.degreeName = degreeName;
-        this.committees = new Committee[0];
     }
 
     public String getName() {
@@ -42,16 +40,8 @@ class Lecturer {
         this.department = department;
     }
 
-    public int getNumOfCommittees() {
-        return numOfCommittees;
-    }
-
-    public Committee[] getCommittees() {
+    public ArrayList<Committee> getCommittees() {
         return committees;
-    }
-
-    public void setNumOfCommittees(int numOfCommittees) {
-        this.numOfCommittees = numOfCommittees;
     }
 
     public double getSalary() {
@@ -69,11 +59,9 @@ class Lecturer {
 
 
     public void addCommitteeToLecturer(Committee committee) {
-        if (numOfCommittees == committees.length){
-            committees = (Committee[]) Utils.resizeArr(committees);
-        }
-        committees[numOfCommittees++] = committee;
+        committees.add(committee);
     }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -83,13 +71,13 @@ class Lecturer {
                 .append("department: ")
                 .append(department != null ? department + "\n" : "not in a department\n")
                 .append("committees: ");
-        if (numOfCommittees == 0) {
+        if (committees.isEmpty()) {
             sb.append("not in any committees");
         } else {
             sb.append("[");
-            for (int i = 0; i < numOfCommittees; i++) {
-                sb.append(committees[i].getName());
-                if (i != numOfCommittees - 1) {
+            for (int i = 0; i < committees.size(); i++) {
+                sb.append(committees.get(i).getName());
+                if (i != committees.size() - 1) {
                     sb.append(", ");
                 }
             }

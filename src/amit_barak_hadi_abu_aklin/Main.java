@@ -5,23 +5,19 @@ import amit_barak_hadi_abu_aklin.college.Exceptions.CommitteeException;
 import amit_barak_hadi_abu_aklin.college.Exceptions.DepartmentException;
 import amit_barak_hadi_abu_aklin.college.Exceptions.LecturerException;
 
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Scanner;
 
 // Amit Barak -322605080 ; Hadi Abu-Aklin - 211670641
 
 public class Main {
-//    private static final String[] MENU = {
-//            "Exit Program",
-//            "Add Lecturer",
-//            "Add Committee",
-//            "Add Division",
-//            "Add lecturer to committee",
-//            "Show average salary for ALL lecturers",
-//            "Show average salary for lecturers in a specific division",
-//            "Show all lecturers",
-//            "Show all committees",
-//
-//    };
+    private static final String DATA_DIRECTORY = "src";
+    private static final String FILE_NAME = "college_data.ser";
+    private static final Path DATA_PATH = Paths.get(DATA_DIRECTORY, FILE_NAME);
+
     private static final String[] MENU = {
             "Exit Program",                                      // 0
             "Add Lecturer",                                      // 1
@@ -41,18 +37,29 @@ public class Main {
     };
     private static Scanner s;
     private static boolean exceptionOccurred = false;
-    private static void run() {
 
-        System.out.println("enter college name:");
-        String cName = s.nextLine();
-        College c1 = new College(cName);
+    private static void run() {
+        College c1;
+
+        try {
+            c1 = loadCollegeData();
+            System.out.println("College data loaded successfully from " + DATA_PATH);
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("No saved college data found or error loading data. Starting new college.");
+            System.out.println("Enter college name:");
+            String cName = s.nextLine();
+            c1 = new College(cName);
+        }
 
         int userChosen;
         do {
             exceptionOccurred = false;
             userChosen = showMenu(s);
             switch (userChosen) {
-                case 0 -> System.out.println("goodbye");
+                case 0 -> {
+                    System.out.println("Goodbye! Saving data...");
+                    saveCollegeData(c1);
+                }
                 case 1 -> {s.nextLine();addLecturerMain(c1);}
                 case 2 -> {s.nextLine();addCommitteeMain(c1);}
                 case 3 -> {s.nextLine();lecturerToCommitteeMain(c1);}
@@ -70,6 +77,28 @@ public class Main {
                 default -> System.out.println("Unexpected value");
             }
         } while (userChosen != 0);
+    }
+
+    private static void saveCollegeData(College college) {
+        try {
+            Files.createDirectories(DATA_PATH.getParent());
+
+            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(DATA_PATH.toFile()))) {
+                oos.writeObject(college);
+                System.out.println("College data saved successfully to " + DATA_PATH);
+            }
+        } catch (IOException e) {
+            System.err.println("Error saving college data: " + e.getMessage());
+        }
+    }
+
+    private static College loadCollegeData() throws IOException, ClassNotFoundException {
+        if (!Files.exists(DATA_PATH)) {
+            throw new FileNotFoundException("Data file not found at " + DATA_PATH);
+        }
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(DATA_PATH.toFile()))) {
+            return (College) ois.readObject();
+        }
     }
 
     private static void removeFromCommitteeMain(College c1) {
@@ -124,6 +153,7 @@ public class Main {
         }
         if(degree.equals("PROF")){
             System.out.println("Enter lecturer's granting body's name: ");
+            s.nextLine();
             grantingBody = s.nextLine();
         }
         double salary;
@@ -155,12 +185,20 @@ public class Main {
     }
 
     private static void addCommitteeMain(College c1) {
+        String degree;
         System.out.println("Enter committee's name:" );
         String name = s.nextLine();
         System.out.println("Enter committee's head:" );
         String head = s.nextLine();
+        do{
+            System.out.println("Enter lecturer's degree: (FIRST,SECOND,DOC,PROF)");
+            degree = s.nextLine().toUpperCase();
+            if (!degree.equals("FIRST") && !degree.equals("SECOND") && !degree.equals("DOC") && !degree.equals("PROF")){
+                System.out.println("this degree doesn't count");
+            }
+        }while(!degree.equals("FIRST") && !degree.equals("SECOND") && !degree.equals("DOC") && !degree.equals("PROF"));
         try{
-        College.addCommitteeUser(c1 ,name, head);
+            College.addCommitteeUser(c1 ,name, head ,degree);
         } catch (CommitteeException | LecturerException e){
             System.out.println(e.getMessage());
             exceptionOccurred = true;
@@ -189,8 +227,9 @@ public class Main {
                 System.out.println("invalid number please enter a new one");
             }
         }while (num < 0);
+        s.nextLine();
         try{
-        College.addDepartmentUser(c1,name,num);
+            College.addDepartmentUser(c1,name,num);
         }catch (DepartmentException e){
             System.out.println(e.getMessage());
             exceptionOccurred = true;
@@ -213,7 +252,7 @@ public class Main {
         System.out.println("Enter committee's name: " );
         String nameC = s.nextLine();
         try{
-        College.lecturerToCommitteeUser(c1,nameL,nameC);}
+            College.lecturerToCommitteeUser(c1,nameL,nameC);}
         catch (LecturerException|CommitteeException e){
             System.out.println(e.getMessage());
             exceptionOccurred = true;
@@ -280,6 +319,8 @@ public class Main {
                     }
                     default -> System.out.println("Invalid answer, returning to main menu.");
                 }
+            } else {
+                System.out.println("successful operation");
             }
         }
     }
@@ -289,8 +330,8 @@ public class Main {
         String department = s.nextLine();
         double res = 0 ;
         try{
-        res = College.showAvgPayDepartmentUser(c1, department);
-        System.out.println("average department's pay is:" + res );
+            res = College.showAvgPayDepartmentUser(c1, department);
+            System.out.println("average department's pay is:" + res );
         }catch (DepartmentException e){
             System.out.println(e.getMessage());
             exceptionOccurred = true;
@@ -332,8 +373,8 @@ public class Main {
         System.out.println("enter doctor's name:");
         String d2 = s.nextLine();
         try{
-           res = College.compareDoctorsUser(c1,d1,d2);
-           System.out.println(res);
+            res = College.compareDoctorsUser(c1,d1,d2);
+            System.out.println(res);
         }catch (LecturerException e){
             System.out.println(e.getMessage());
             exceptionOccurred = true;
@@ -372,8 +413,6 @@ public class Main {
                 System.out.println("Successful operation");
             }
         }
-
-
     }
 
     private static void compareCommitteesMain(College c1) {
@@ -383,15 +422,15 @@ public class Main {
         String name2 = s.nextLine();
         int choice;
         do{
-        System.out.println("Compare by:");
-        System.out.println("1. Number of lecturers");
-        System.out.println("2. Total number of papers by doctors");
-        choice = s.nextInt();
-        s.nextLine();
+            System.out.println("Compare by:");
+            System.out.println("1. Number of lecturers");
+            System.out.println("2. Total number of papers by doctors");
+            choice = s.nextInt();
+            s.nextLine();
         }while (choice <1 || choice >2);
         String res = "";
         try{
-        res = College.compareCommitteesUser(c1,name1, name2, choice);}
+            res = College.compareCommitteesUser(c1,name1, name2, choice);}
         catch (CommitteeException e){
             System.out.println(e.getMessage());
             exceptionOccurred = true;
@@ -419,7 +458,6 @@ public class Main {
         return s.nextInt();
     }
 
-
     public static void main(String[] args) {
         s = new Scanner(System.in);
         run();
@@ -427,6 +465,3 @@ public class Main {
     }
     // Amit Barak -322605080 ; Hadi Abu-Aklin - 211670641
 }
-
-
-
